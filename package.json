@@ -2,5 +2,14 @@
   "name": "ias",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon out/index.js",
+    "dev": "esbuild --bundle --sourcemap --platform=node --outdir=out/ --watch index.ts "
+
+  },
+  "dependencies": {
+    "esbuild": "^0.14.27",
+    "nodemon": "^2.0.15"
+  }
 }

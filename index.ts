@@ -34,16 +34,7 @@ type EnderecoDeUmaPalavra = number;
  */
 type Registrador = Instrucao;
 
-// Registradores
-let ProgramCounter: EnderecoDeUmaInstrucao = 0;
-let InstructionRegister: Maybe<Instrucao> = null;
-let InstructionBufferRegister: Maybe<Instrucao> = null;
-// Unidade lógica e aritmética
-let MemoryPrincipal: Palavra[] = new Array(1024).fill((0b0).toString(2));
-let MemoryAddressRegister: Maybe<EnderecoDeUmaPalavra> = null;
-let MemoryBufferRegister: Maybe<Palavra> = null;
-let Acumulador: Maybe<Registrador> = null;
-let MultiplierQuotient: Maybe<Registrador> = null;
+
 const ReadMemory = () => {
   // 1. O endereço da palavra a ser lida é escrita no Memory Address Register
   // 2. Os circuitos de controle da unidade de controle (UC) enviam um sinal de controle através de um canal de
@@ -155,8 +146,11 @@ const ADD_ABSOLUTE = () => {
   if (Acumulador === null) {
     throw new Error("Acumulador não inicializado");
   }
+  const acumulatorAsInt = parseInt(Acumulador, 2);
+  const memoryBufferAsInt = parseInt(MemoryBufferRegister as string, 2);
+
   Acumulador = Math.abs(
-    parseInt(Acumulador + parseInt(MemoryBufferRegister as string, 2), 2)
+  acumulatorAsInt + memoryBufferAsInt
   ).toString(2);
 };
 
@@ -168,3 +162,31 @@ const SUB = () => {
     parseInt(Acumulador, 2) - parseInt(MemoryBufferRegister as string, 2)
   ).toString(2);
 };
+
+// Registradores
+let ProgramCounter: EnderecoDeUmaInstrucao = 0;
+let InstructionRegister: Maybe<Instrucao> = null;
+let InstructionBufferRegister: Maybe<Instrucao> = null;
+// Unidade lógica e aritmética
+let MemoryAddressRegister: Maybe<EnderecoDeUmaPalavra> = null;
+let MemoryBufferRegister: Maybe<Palavra> = null;
+let Acumulador: Maybe<Registrador> = null;
+let MultiplierQuotient: Maybe<Registrador> = null;
+
+let MemoryPrincipal: Palavra[] = [
+  // ------- Instructions -------
+  // LOAD M(X) 2, ADD M(X) 3
+  "0000000100000000001000000111000000000011",
+  // STOR M(X) 2, LOAD M(X) 4
+  "0010000100000000001000000111000000000100",
+  //  ------ Data ------
+  "000100",
+  "000011",
+]
+MemoryPrincipal.forEach(inst => {
+  LeftSearchLifeCycle()
+  ExecuteLifeCycle()
+  RightSearchLifeCycle()
+  ExecuteLifeCycle()
+})
+
